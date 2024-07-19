@@ -67,7 +67,7 @@ class Server {
             const message = await this.auction.addItem(request.user, request.itemName, request.price);
             this.broadcast(message);
         } catch (error) {
-            console.log("error");
+            console.log("error", error);
         }
     }
 
@@ -77,7 +77,7 @@ class Server {
             const message = await this.auction.bidItem(request.user, request.itemName, request.price);
             this.broadcast(message);
         } catch (error) {
-            console.log("error");
+            console.log("error", error);
         }
     }
 
@@ -88,7 +88,7 @@ class Server {
             const message = await this.auction.sellItem(request.user, request.itemName);
             this.broadcast(message);
         } catch (error) {
-            console.log("error");
+            console.log("error", error);
         }
     }
 
@@ -104,6 +104,7 @@ class Server {
         this.streams.forEach(stream => {
             stream.write(messageBuffer);
         });
+        console.log(message);
     }
 }
 
