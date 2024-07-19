@@ -3,7 +3,8 @@
 I built this simple P2P application using `hyperbee`, `hyperswarm/rpc` and `hyperbee`.
 
 The application uses OOP to define types such as `Server`, `Client`, `CLI` and `Auction`.
-Most of it is complete, save for the error handling when users enter invalid commands.
+Most of it is complete, save for the error handling when users enter invalid commands.\
+The items for bid are persisted using HyperBee.
 
 I hope you find it interesting.
 
@@ -16,6 +17,8 @@ I'd love to hear back from you.
 
 ## How to Run
 
+- Install all packages with `npm inastll`
+- Install hyperdht globally with `npm install -g hyperdht`
 - Start the bootstrap node with `hyperdht --bootstrap --host 127.0.0.1 --port 30001` or any port of your choice
 - Start the server with `node src/server.js`
 - Copy the key in the terminal
