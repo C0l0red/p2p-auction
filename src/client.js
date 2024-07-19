@@ -16,7 +16,7 @@ class Client {
 
         this.rpc = new RPC({dht: this.dht});
         this.client = this.rpc.connect(this.serverPublicKey);
-        await this.joinAuction();
+//        await this.joinAuction();
         this.client.stream.on("data", this.handleData);
     }
 

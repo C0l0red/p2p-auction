@@ -68,8 +68,6 @@ class Server {
             this.broadcast(message);
         } catch (error) {
             console.log("error");
-            const stream = this.streams[request.id];
-            this.sendMessage(stream, error);
         }
     }
 
@@ -80,8 +78,6 @@ class Server {
             this.broadcast(message);
         } catch (error) {
             console.log("error");
-            const stream = this.streams[request.id];
-            this.sendMessage(stream, error);
         }
     }
 
@@ -93,8 +89,6 @@ class Server {
             this.broadcast(message);
         } catch (error) {
             console.log("error");
-            const stream = this.streams[request.id];
-            this.sendMessage(stream, error);
         }
     }
 
@@ -105,15 +99,11 @@ class Server {
 
     broadcast(message) {
         const jsonMessage = {message}
+        const messageBuffer = Buffer.from(JSON.stringify(jsonMessage), 'utf-8');
 
         this.streams.forEach(stream => {
-            this.sendMessage(stream, jsonMessage);
+            stream.write(messageBuffer);
         });
-    }
-
-    sendMessage(stream, message) {
-        const messageBuffer = Buffer.from(JSON.stringify(message), 'utf-8');
-        stream.write(messageBuffer);
     }
 }
 
