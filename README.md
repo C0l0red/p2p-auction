@@ -13,3 +13,11 @@ I wanted to know if I could get permission to contribute to the projects for Typ
 interesting while preparing for this assessment.
 
 I'd love to hear back from you.
+
+## How to Run
+
+- Start the bootstrap node with `hyperdht --bootstrap --host 127.0.0.1 --port 30001` or any port of your choice
+- Start the server with `node src/server.js`
+- Copy the key in the terminal
+- Start any number of clients with `node src/client.js <public-key>`
+- There is a (somewhat) interactive CLI telling you how to take actions
