@@ -22,20 +22,18 @@ class Server {
         this.dht = new DHT({
             port: this.port,
             keyPair: DHT.keyPair(dhtSeed),
-            bootstrap: [{host: '127.0.0.1', port: 30001}] // note boostrap points to dht that is started via cli
+            bootstrap: [{host: '127.0.0.1', port: 30001}] // The bootstrap node should be running
         });
         await this.dht.ready();
 
         const rpcSeed = await this.getSeedOrCreate('rpc-seed');
 
-        // setup rpc server
         this.rpc = new RPC({seed: rpcSeed, dht: this.dht});
     }
 
     async getSeedOrCreate(seedKey) {
         let seedValue = (await this.bee.get(seedKey))?.value
         if (!seedValue) {
-            // not found, generate and store in db
             seedValue = crypto.randomBytes(32);
             await this.bee.put(seedKey, seedValue);
         }

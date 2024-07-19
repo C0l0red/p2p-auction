@@ -10,13 +10,12 @@ class Client {
 
     async init() {
         this.dht = new DHT({
-            bootstrap: [{host: '127.0.0.1', port: 30001}] // note boostrap points to dht that is started via cli
+            bootstrap: [{host: '127.0.0.1', port: 30001}] // Bootstrap server should be running
         });
         await this.dht.ready();
 
         this.rpc = new RPC({dht: this.dht});
         this.client = this.rpc.connect(this.serverPublicKey);
-//        await this.joinAuction();
         this.client.stream.on("data", this.handleData);
     }
 
@@ -47,11 +46,6 @@ class Client {
         await this.client.event('sell-item', rawPayload);
     }
 
-    async close() {
-        // closing connection
-        await this.rpc.destroy();
-    }
-
     async handleData(data) {
         try {
             const jsonData = JSON.parse(data.toString('utf-8'));
@@ -73,7 +67,7 @@ console.log("1. AUCTION -> You can auction an item with the format 'AUCTION <ite
 console.log("2. BID -> You can bid for an item with the format 'BID <item-name> FOR <price>'");
 console.log("3. SELL -> You can sell an item you auctioned for the price of the highest bid with the format 'SELL <item-name>'\n");
 
-const client = new Client(name, process.argv[2]);
+const client = new Client(name, process.argv[2]); // Pass the key as an argument
 await client.init();
 
 async function guess() {
