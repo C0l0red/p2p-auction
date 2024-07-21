@@ -6,8 +6,8 @@
 
 I built this simple P2P application using `hypercore`, `hyperswarm/rpc` and `hyperbee`.
 
-The application uses OOP to define types such as `Server`, `Client`, `CLI` and `Auction`.
-Most of it is complete, save for the error handling when users enter invalid commands.\
+The application uses OOP to define types such as `Server`, `Client`, `UserInterface`, `CLI` and `Auction`.
+This branch is the complete solution, favoring class package defined class properties over user defined ones, adding more robust error handling and propagation.\
 The items for bid are persisted using HyperBee.
 
 I hope you find it interesting.
