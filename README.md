@@ -1,5 +1,9 @@
 # P2P Auction
 
+## THIS IS A FEATURE BRANCH I CREATED AFTER THE ASSESSMENT TO REFACTOR SOME THINGS AND COMPLETE THE APPLICATION AFTER SOME MORE READING.
+
+## FOR THE INTIAL SUBMISSION, CHECKOUT TO THE MASTER BRANCH.
+
 I built this simple P2P application using `hypercore`, `hyperswarm/rpc` and `hyperbee`.
 
 The application uses OOP to define types such as `Server`, `Client`, `CLI` and `Auction`.
