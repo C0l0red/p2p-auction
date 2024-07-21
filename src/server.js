@@ -20,7 +20,7 @@ class Server {
         const dhtSeed = await this.getSeedOrCreate('dht-seed');
         this.dht = new DHT({
             port: this.port,
-            keyPair: DHT.keyPair(dhtSeed),
+            keyPair: DHT.keyPair(dhtSeed), // Seed to create a predictable keyPair
             bootstrap: [{host: '127.0.0.1', port: 30001}] // The bootstrap node should be running
         });
         await this.dht.ready();

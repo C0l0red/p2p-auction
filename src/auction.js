@@ -3,17 +3,6 @@ export default class Auction {
         this.db = db
     }
 
-    async addMember(name) {
-        let members = (await this.db.get("members"))?.value;
-        if (!members) {
-            members = [name];
-        } else {
-            members = JSON.parse(members);
-            members.push(name);
-        }
-        await this.db.put('members', JSON.stringify(members));
-    }
-
     async getAllItems() {
         const readStream = await this.db.createReadStream({gte: 'item', lt: 'iten'});
 
@@ -45,8 +34,8 @@ export default class Auction {
         if (user.toLowerCase() === item.owner) {
             throw new Error("You cannot bid for an item you auctioned");
         }
-        if (price < item.price) {
-            throw new Error(`Your bid is lower than the highest bid of ${item.price} USDt`);
+        if (price <= item.price) {
+            throw new Error(`Your bid is not higher than the current minimum of ${item.price} USDt`);
         }
 
         item.price = price;
@@ -72,7 +61,7 @@ export default class Auction {
     async getItem(itemName) {
         let itemBuffer = (await this.db.get(`item:${itemName}`))?.value;
         if (!itemBuffer) {
-            throw new Error('Item not found')
+            throw new Error(`No item '${itemName}' is currently on auction`);
         }
         return JSON.parse(itemBuffer.toString());
     }
