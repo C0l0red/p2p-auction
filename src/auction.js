@@ -23,11 +23,11 @@ export default class Auction {
 
     async bidItem(user, itemName, price) {
         const item = await this.getItem(itemName.toLowerCase());
-        if (price < item.price) {
-            throw new Error(`Your bid is lower than the highest bid of ${item.price} USDt`);
-        }
         if (user.toLowerCase() === item.owner) {
             throw new Error("You cannot bid for an item you auctioned");
+        }
+        if (price < item.price) {
+            throw new Error(`Your bid is lower than the highest bid of ${item.price} USDt`);
         }
 
         item.price = price;

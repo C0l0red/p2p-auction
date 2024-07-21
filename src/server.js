@@ -11,7 +11,6 @@ class Server {
         this.port = port;
         this.core = new Hypercore(corePath);
         this.bee = new Hyperbee(this.core, {keyEncoding: 'utf-8', valueEncoding: 'binary'});
-        this.streams = [];
         this.auction = new Auction(this.bee);
     }
 
@@ -45,64 +44,57 @@ class Server {
         await this.rpcServer.listen();
         console.log('rpc server started listening on public key:', this.rpcServer.publicKey.toString('hex'));
 
-        this.rpcServer.respond('join', this.handleJoin.bind(this));
         this.rpcServer.respond('auction', this.handleAuctionItem.bind(this));
         this.rpcServer.respond('bid-item', this.handleBidItem.bind(this));
         this.rpcServer.respond('sell-item', this.handleSellItem.bind(this));
-
-        this.rpcServer.on('connection', this.handleConnection.bind(this));
     }
 
-    async handleJoin(rawRequest) {
-        const response = {id: this.streams.length - 1};
-        console.log(`Client ${response.id} joined`);
-        return Buffer.from(JSON.stringify(response), "hex");
-    }
-
-    async handleAuctionItem(rawRequest) {
+    async handleAuctionItem(rawRequest, rpc) {
         const request = JSON.parse(rawRequest.toString('utf-8'));
         try {
             const message = await this.auction.addItem(request.user, request.itemName, request.price);
             this.broadcast(message);
         } catch (error) {
-            console.log("error", error);
+            const errorMessage = {error: error.message};
+            this.sendMessage(errorMessage, rpc._mux.stream);
         }
     }
 
-    async handleBidItem(rawRequest) {
+    async handleBidItem(rawRequest, rpc) {
         const request = JSON.parse(rawRequest.toString('utf-8'));
         try {
             const message = await this.auction.bidItem(request.user, request.itemName, request.price);
             this.broadcast(message);
         } catch (error) {
-            console.log("error", error);
+            const errorMessage = {error: error.message};
+            this.sendMessage(errorMessage, rpc._mux.stream);
         }
     }
 
-    async handleSellItem(rawRequest) {
+    async handleSellItem(rawRequest, rpc) {
         const request = JSON.parse(rawRequest.toString('utf-8'));
 
         try {
             const message = await this.auction.sellItem(request.user, request.itemName);
             this.broadcast(message);
         } catch (error) {
-            console.log("error", error);
+            const errorMessage = {error: error.message};
+            this.sendMessage(errorMessage, rpc._mux.stream);
         }
     }
 
-    async handleConnection(rpc) {
-        this.streams.push(rpc.stream);
-        await this.bee.replicate(rpc.stream);
+    broadcast(message) {
+        const jsonMessage = {message};
+
+        this.rpcServer.connections.forEach(rpc => {
+            this.sendMessage(jsonMessage, rpc.stream);
+        })
+        console.log(message);
     }
 
-    broadcast(message) {
-        const jsonMessage = {message}
-        const messageBuffer = Buffer.from(JSON.stringify(jsonMessage), 'utf-8');
-
-        this.streams.forEach(stream => {
-            stream.write(messageBuffer);
-        });
-        console.log(message);
+    sendMessage(message, stream) {
+        const messageBuffer = Buffer.from(JSON.stringify(message), 'utf-8');
+        stream.write(messageBuffer);
     }
 }
 

@@ -19,15 +19,6 @@ class Client {
         this.client.stream.on("data", this.handleData);
     }
 
-    async joinAuction() {
-        const payload = {name: this.user};
-        const rawPayload = Buffer.from(JSON.stringify(payload), 'hex');
-        const rawResponse = await this.client.request('join', rawPayload);
-        const response = JSON.parse(rawResponse.toString('utf-8'));
-
-        this.id = response.id;
-    }
-
     async makeAuctionRequest(itemName, price) {
         const payload = {user: this.user, itemName, price};
         const rawPayload = Buffer.from(JSON.stringify(payload), 'utf-8');
@@ -51,6 +42,10 @@ class Client {
             const jsonData = JSON.parse(data.toString('utf-8'));
             if (jsonData.message) {
                 console.log(`\x1b[36m[SERVER]\x1b[0m`, jsonData.message);
+                process.stdout.write('> ');
+            }
+            if (jsonData.error) {
+                console.log(`\x1b[31m[ERROR]\x1b[0m`, jsonData.error);
                 process.stdout.write('> ');
             }
         } catch (error) {
