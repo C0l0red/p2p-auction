@@ -47,6 +47,23 @@ class Server {
         this.rpcServer.respond('auction', this.handleAuctionItem.bind(this));
         this.rpcServer.respond('bid-item', this.handleBidItem.bind(this));
         this.rpcServer.respond('sell-item', this.handleSellItem.bind(this));
+
+        this.rpcServer.on('connection', this.handleConnection.bind(this));
+    }
+
+    async handleConnection(rpc) {
+        const itemLogs = await this.auction.getAllItems();
+
+        if (itemLogs.length === 0) {
+            const introMessage = {message: 'No Item is available for auction right now. Add yours to begin or wait'}
+            this.sendMessage(introMessage, rpc.stream);
+            return;
+        }
+
+        itemLogs.forEach(itemLog => {
+            const message = {message: itemLog};
+            this.sendMessage(message, rpc.stream);
+        });
     }
 
     async handleAuctionItem(rawRequest, rpc) {
@@ -88,8 +105,7 @@ class Server {
 
         this.rpcServer.connections.forEach(rpc => {
             this.sendMessage(jsonMessage, rpc.stream);
-        })
-        console.log(message);
+        });
     }
 
     sendMessage(message, stream) {
